@@ -1,4 +1,10 @@
 {
+	"discord": {
+		"Username": "string",
+		"Avatar": "string",
+		"Activity": "name",
+		"status": "string"
+	},
 	"github": {
 	},
 	"games": {
