@@ -15,9 +15,12 @@ import (
 
 	"raccoonlive-api/anilist"
 	"raccoonlive-api/discord"
+	"raccoonlive-api/youtube"
 )
 
 func main() {
+	youtube.Test()
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
