@@ -1,0 +1,77 @@
+{
+	"github": {
+	},
+	"games": {
+	},
+	"music": {
+		""
+	},
+	"youtube": {
+		"profileLink": "",
+		"lastVideo": {
+			"title": "",
+			"link": "",
+			"thumbnail": ""
+		}
+	},
+	"backlogged" : {
+		"profileLink": "",
+		"playing": [
+			{
+				"title": "",
+				"siteUrl": ""
+			}
+		],
+		"favorites": [
+			{
+				"title": "",
+				"siteUrl": ""
+			}
+		]
+	},
+	"anilist": {
+		"profileLink": "",
+		"currents": {
+			"animes": [
+				{
+					"title": "",
+					"progress": "",
+					"siteUrl": "",
+				}
+			],
+			"mangas": [
+				{
+					"title": "",
+					"progress": "",
+					"siteUrl": "",
+				}
+			]
+		},
+		"lastActivity": {
+			"title": "",
+			"progress": "",
+			"status": "",
+			"siteUrl": ""
+		},
+		"favorites": {
+			"animes": [
+				{
+					"title": "",
+					"siteUrl": ""
+				}
+			],
+			"mangas": [
+				{
+					"title": "",
+					"siteUrl": ""
+				}
+			],
+			"characters": [
+				{
+					"name": "",
+					"siteUrl": ""
+				}
+			]
+		}
+	}
+}
