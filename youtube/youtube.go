@@ -11,11 +11,20 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-func Test() {
+type YoutubeVideo struct {
+	Title string
+	Date string
+	Description string
+	Thumbnail string
+	ID string
+	URL string
+}
+
+func GetLastVideo() (YoutubeVideo, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
-		return
+		return YoutubeVideo{}, err
 	}
 
 	ctx := context.Background()
@@ -26,14 +35,8 @@ func Test() {
 	service, err := youtube.NewService(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		log.Fatalf("Error creation service: %v", err)
+		return YoutubeVideo{}, err
 	}
-
-	// fonctionne probablement mais moins eco (100 unités de cout)
-	// call := service.Search.List([]string{"snippet"}).
-	// 	ChannelId(channelID).
-	// 	MaxResults(1).
-	// 	Order("date").
-	// 	Type("video")
 
 	uploadsPlaylistID := "UU" + channelID[2:]
 	call := service.PlaylistItems.List([]string{"snippet"}).
@@ -43,15 +46,20 @@ func Test() {
 	resp, err := call.Do()
 	if err != nil {
 		log.Fatalf("Error calling API: %v", err)
+		return YoutubeVideo{}, err
 	}
 
-	video := resp.Items[0]
-	snippet := video.Snippet
+	videoData := resp.Items[0]
+	snippet := videoData.Snippet
 
-	fmt.Printf("Titre       : %s\n", snippet.Title)
-	fmt.Printf("Date        : %s\n", snippet.PublishedAt)
-	fmt.Printf("Description : %s\n", snippet.Description)
-	fmt.Printf("Thumbnail   : %s\n", snippet.Thumbnails.High.Url)
-	fmt.Printf("Video ID    : %s\n", snippet.ResourceId.VideoId)
-	fmt.Printf("URL         : https://www.youtube.com/watch?v=%s\n", snippet.ResourceId.VideoId)
+	video := YoutubeVideo{
+		Title: snippet.Title,
+		Date: snippet.PublishedAt,
+		Description: snippet.Description,
+		Thumbnail: snippet.Thumbnails.High.Url,
+		ID: snippet.ResourceId.VideoId,
+		URL: fmt.Sprintf("https://www.youtube.com/watch?v=%s", snippet.ResourceId.VideoId),
+	}
+
+	return video, nil
 }

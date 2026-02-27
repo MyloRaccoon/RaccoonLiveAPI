@@ -19,8 +19,6 @@ import (
 )
 
 func main() {
-	youtube.Test()
-
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -51,7 +49,15 @@ func main() {
 			return
 		}
 		json.NewEncoder(w).Encode(activity)
-	}) 
+	})
+
+	router.HandleFunc("/youtube", func(w http.ResponseWriter, r *http.Request) {
+		video, err := youtube.GetLastVideo()
+		if err != nil {
+			return
+		}
+		json.NewEncoder(w).Encode(video)
+	})
 
 	server := &http.Server{Addr: ":8080", Handler: router}
 
