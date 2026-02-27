@@ -112,3 +112,87 @@ func GetLastActivity(userID int) (AnilistActivity, error) {
 		SiteUrl: siteUrl,
 	}, nil
 }
+
+type Anime struct {
+	ID int
+	Title string
+	Cover string
+	Genres []string
+
+}
+
+func GetFavoritesAnime(username string) ([]Anime, error) {
+	query := `
+	query GetUserFavorites($username: String!) {
+		User(name: $username) {
+			name
+			favourites {
+				anime {
+					nodes {
+						id
+						title {
+							romaji
+							english
+							native
+						}
+						coverImage {
+							large
+						}
+						averageScore
+						genres
+					}
+				}
+			}
+		}
+	}
+	`
+	variables := map[string]any{
+		"username": username,
+	}
+	body, _ := json.Marshal(map[string]any{
+		"query": query,
+		"variables": variables,
+	})
+
+	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		return []Anime{}, err
+	}
+	defer resp.Body.Close()
+
+	var data struct {
+		Data struct {
+			User struct {
+				Favourites struct {
+					Anime struct {
+						Nodes []struct {
+							ID int `json:"id"`
+							Title struct {
+								Romaji string `json:"romaji"`
+							} `json:"title"`
+							CoverImage struct {
+								Large string `json:"large"`
+							} `json:"coverImage"`
+							Genres []string `json:"genres"`
+						} `json:"nodes"`
+					} `json:"anime"`
+				} `json:"favourites"`
+			} `json:"user"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return []Anime{}, err
+	}
+
+	favs := []Anime{}
+	for _, animeData := range data.Data.User.Favourites.Anime.Nodes {
+		favs = append(favs, Anime{
+			ID: animeData.ID,
+			Title: animeData.Title.Romaji,
+			Cover: animeData.CoverImage.Large,
+			Genres: animeData.Genres,
+		})
+	}
+
+	return favs, nil
+}

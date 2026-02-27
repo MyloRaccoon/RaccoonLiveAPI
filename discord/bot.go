@@ -10,6 +10,7 @@ import (
 )
 
 func Run() *discordgo.Session {
+	println("Connecting bot...")
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -22,30 +23,25 @@ func Run() *discordgo.Session {
 		fmt.Println("Error creating Discord sessions: ", err)
 		return nil
 	}
-	println("bot created")
 
 	dg.AddHandler(messageCreate)
-	println("added messageCreate event")
 	dg.AddHandler(presenceUpdate)
-	println("added presenceUpdate event")
 	dg.Identify.Intents = discordgo.IntentsGuildMembers | 
 				discordgo.IntentsGuildPresences |
 				discordgo.IntentsGuildMessages |
 				discordgo.IntentsMessageContent
-	println("added intents")
 
 	err = dg.Open()
 	if err != nil {
 		fmt.Println("Error opening connection: ", err)
 		return nil
 	}
-	println("bot connected")
+	println("bot connected!")
 
 	return dg
 }
 
 func presenceUpdate(s *discordgo.Session, p *discordgo.PresenceUpdate) {
-	println("Presence updated")
 	activity := ""
 	if len(p.Activities) > 0 {
 		activity = p.Activities[0].Name
@@ -56,7 +52,6 @@ func presenceUpdate(s *discordgo.Session, p *discordgo.PresenceUpdate) {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	fmt.Println("Message created!")
 	fmt.Printf("[%s] %s ", m.Author.Username, m.Content)
 
 	if m.Author.ID == s.State.User.ID {
@@ -92,5 +87,4 @@ func updateStatus(username string, avatar string, activity string, status string
 	} else if status == "&remove" {
 		Status.Status = ""
 	}
-	println("status updated")
 }
