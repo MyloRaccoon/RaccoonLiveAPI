@@ -6,3 +6,5 @@ An API for cool stuff about me.
 - Get my discord profile
 ### GET /anilist
 - Get my last anilist activity
+### GET /youtube
+- Get my last youtube video
