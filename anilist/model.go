@@ -8,23 +8,25 @@ import (
 
 const URL = "https://graphql.anilist.co"
 
+func requestAnilist(query string, variables map[string]any, result any) error {
+	body, _ := json.Marshal(map[string]any{
+		"query": query,
+		"variables": variables,
+	})
+	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return json.NewDecoder(resp.Body).Decode(result)
+}
+
 func getUserID(username string) (int, error) {
 	query := getUserIDQuery
 	variables := map[string]any{
 		"name": username,
 	}
-	body, _ := json.Marshal(map[string]any{
-		"query": query,
-		"variables": variables,
-	})
-
-	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-	
-	var result struct {
+	var data struct {
 		Data struct {
 			User struct {
 				ID int `json:"id"`
@@ -32,11 +34,11 @@ func getUserID(username string) (int, error) {
 		} `json:"Data"`
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := requestAnilist(query, variables, &data); err != nil {
 		return 0, err
 	}
 
-	return result.Data.User.ID, nil
+	return data.Data.User.ID, nil
 }
 
 func getLastActivity(userID int) (AnilistActivity, error) {
@@ -44,18 +46,7 @@ func getLastActivity(userID int) (AnilistActivity, error) {
 	variables := map[string]any {
 		"userId": userID,
 	}
-	body, _ := json.Marshal(map[string]any{
-		"query": query,
-		"variables": variables,
-	})
-
-	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		return AnilistActivity{}, nil
-	}
-	defer resp.Body.Close()
-
-	var result struct {
+	var data struct {
 		Data struct {
 			Page struct {
 				Activities []struct {
@@ -73,11 +64,11 @@ func getLastActivity(userID int) (AnilistActivity, error) {
 		} `json:"data"`
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return AnilistActivity{}, nil
+	if err := requestAnilist(query, variables, &data); err != nil {
+		return AnilistActivity{}, err
 	}
 
-	activityData := result.Data.Page.Activities[0]
+	activityData := data.Data.Page.Activities[0]
 	status := activityData.Status
 	progress := activityData.Progress
 	siteUrl := activityData.Media.SiteURL
@@ -96,17 +87,6 @@ func getFavoritesAnime(username string) ([]Anime, error) {
 	variables := map[string]any{
 		"username": username,
 	}
-	body, _ := json.Marshal(map[string]any{
-		"query": query,
-		"variables": variables,
-	})
-
-	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		return []Anime{}, err
-	}
-	defer resp.Body.Close()
-
 	var data struct {
 		Data struct {
 			User struct {
@@ -128,7 +108,7 @@ func getFavoritesAnime(username string) ([]Anime, error) {
 			} `json:"user"`
 		} `json:"data"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	if err := requestAnilist(query, variables, &data); err != nil {
 		return []Anime{}, err
 	}
 
@@ -151,17 +131,6 @@ func getFavoritesManga(username string) ([]Manga, error) {
 	variables := map[string]any{
 		"username": username,
 	}
-	body, _ := json.Marshal(map[string]any{
-		"query": query,
-		"variables": variables,
-	})
-
-	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		return []Manga{}, err
-	}
-	defer resp.Body.Close()
-
 	var data struct {
 		Data struct {
 			User struct {
@@ -183,7 +152,7 @@ func getFavoritesManga(username string) ([]Manga, error) {
 			} `json:"user"`
 		} `json:"data"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	if err := requestAnilist(query, variables, &data); err != nil {
 		return []Manga{}, err
 	}
 
@@ -206,17 +175,6 @@ func getFavoritesCharacters(username string) ([]Character, error) {
 	variables := map[string]any{
 		"username": username,
 	}
-	body, _ := json.Marshal(map[string]any{
-		"query": query,
-		"variables": variables,
-	})
-
-	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		return []Character{}, err
-	}
-	defer resp.Body.Close()
-
 	var data struct {
 		Data struct {
 			User struct {
@@ -255,7 +213,7 @@ func getFavoritesCharacters(username string) ([]Character, error) {
 			} `json:"user"`
 		} `json:"data"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	if err := requestAnilist(query, variables, &data); err != nil {
 		return []Character{}, err
 	}
 
@@ -285,17 +243,6 @@ func getFavoritesStaff(username string) ([]Staff, error) {
 	variables := map[string]any{
 		"username": username,
 	}
-	body, _ := json.Marshal(map[string]any{
-		"query": query,
-		"variables": variables,
-	})
-
-	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		return []Staff{}, err
-	}
-	defer resp.Body.Close()
-
 	var data struct {
 		Data struct {
 			User struct {
@@ -314,7 +261,7 @@ func getFavoritesStaff(username string) ([]Staff, error) {
 			} `json:"user"`
 		} `json:"data"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	if err := requestAnilist(query, variables, &data); err != nil {
 		return []Staff{}, err
 	}
 
@@ -336,17 +283,6 @@ func getFavoritesStudio(username string) ([]Studio, error) {
 	variables := map[string]any{
 		"username": username,
 	}
-	body, _ := json.Marshal(map[string]any{
-		"query": query,
-		"variables": variables,
-	})
-
-	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		return []Studio{}, err
-	}
-	defer resp.Body.Close()
-
 	var data struct {
 		Data struct {
 			User struct {
@@ -362,7 +298,7 @@ func getFavoritesStudio(username string) ([]Studio, error) {
 			} `json:"user"`
 		} `json:"data"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	if err := requestAnilist(query, variables, &data); err != nil {
 		return []Studio{}, err
 	}
 
