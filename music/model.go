@@ -22,7 +22,7 @@ func saveMusic(musics []Music) error {
 	return err
 }
 
-func GetMusics() ([]Music, error) {
+func getMusics() ([]Music, error) {
 
 	data, err := ioutil.ReadFile("./music/musics.json")
 	if err != nil {
@@ -40,8 +40,8 @@ func GetMusics() ([]Music, error) {
 	return musics, nil
 }
 
-func GetMusicById(id string) (Music, error) {
-	musics, err := GetMusics()
+func getMusicById(id string) (Music, error) {
+	musics, err := getMusics()
 	if err != nil {
 		log.Fatal("Error getting music: %s", err)
 		return Music{}, err
@@ -54,8 +54,8 @@ func GetMusicById(id string) (Music, error) {
 	return Music{}, fmt.Errorf("Error getting music: id '%s' doesn't exists.", id)
 }
 
-func PostMusic(music Music) error {
-	musics, err := GetMusics()
+func postMusic(music Music) error {
+	musics, err := getMusics()
 	if err != nil {
 		log.Fatal("Error getting musics: ", err)
 		return err
@@ -66,8 +66,8 @@ func PostMusic(music Music) error {
 	return  saveMusic(musics)
 }
 
-func DeleteMusicById(id string) (Music, error) {
-	musics, err := GetMusics()
+func deleteMusicById(id string) (Music, error) {
+	musics, err := getMusics()
 	if err != nil {
 		log.Fatal("Error getting musics: ", err)
 		return Music{}, err

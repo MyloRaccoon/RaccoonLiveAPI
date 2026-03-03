@@ -1,6 +1,6 @@
 package anilist
 
-const GetUserIDQuery = `
+const getUserIDQuery = `
 query ($name: String!) {
 	User(name: $name) {
 		id
@@ -8,7 +8,7 @@ query ($name: String!) {
 }
 `
 
-const GetLastActivityQuery = `
+const getLastActivityQuery = `
 query ($userId: Int) {
   Page(page: 1, perPage: 2) {
 	activities(userId: $userId, sort: ID_DESC, type: MEDIA_LIST) {
@@ -26,7 +26,7 @@ query ($userId: Int) {
 }
 `
 
-const GetFavoritesAnimeQuery = `
+const getFavoritesAnimeQuery = `
 query GetUserFavorites($username: String!) {
 	User(name: $username) {
 		name
@@ -52,7 +52,7 @@ query GetUserFavorites($username: String!) {
 }
 `
 
-const GetFavoritesMangaQuery = `
+const getFavoritesMangaQuery = `
 query GetUserFavorites($username: String!) {
 	User(name: $username) {
 		name
@@ -78,7 +78,7 @@ query GetUserFavorites($username: String!) {
 }
 `
 
-const GetFavoritesCharactersQuery = `
+const getFavoritesCharactersQuery = `
 query GetUserFavorites($username: String!) {
 	User(name: $username) {
 		name
@@ -119,7 +119,7 @@ query GetUserFavorites($username: String!) {
 }
 `
 
-const GetFavoritesStaffQuery = `
+const getFavoritesStaffQuery = `
 query GetUserFavorites($username: String!) {
 	User(name: $username) {
 		name
@@ -140,7 +140,7 @@ query GetUserFavorites($username: String!) {
 }
 `
 
-const GetFavoritesStudiosQuery = `
+const getFavoritesStudiosQuery = `
 query GetUserFavorites($username: String!) {
 	User(name: $username) {
 		name

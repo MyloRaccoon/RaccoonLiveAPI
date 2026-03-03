@@ -8,7 +8,7 @@ import (
 )
 
 func ControllerGetMusics(w http.ResponseWriter, r *http.Request) {
-	musics, err := GetMusics()
+	musics, err := getMusics()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -21,7 +21,7 @@ func ControllerGetMusicByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	music, err := GetMusicById(id)
+	music, err := getMusicById(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -34,7 +34,7 @@ func ControllerPostMusic(w http.ResponseWriter, r *http.Request) {
 	var m Music
 	json.NewDecoder(r.Body).Decode(&m)
 
-	err := PostMusic(m)
+	err := postMusic(m)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -48,7 +48,7 @@ func ControllerDeleteMusic(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	music, err := DeleteMusicById(id)
+	music, err := deleteMusicById(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

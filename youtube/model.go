@@ -12,18 +12,9 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-type YoutubeVideo struct {
-	Title string
-	Date string
-	Description string
-	Thumbnail string
-	ID string
-	URL string
-}
-
 const POOLING_MAX = 10
 
-func GetLastVideo() (YoutubeVideo, error) {
+func getLastVideo() (YoutubeVideo, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")

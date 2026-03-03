@@ -7,12 +7,12 @@ import (
 )
 
 func ControllerGetLastActivity(w http.ResponseWriter, r *http.Request) {
-	userId, err := GetUserID(os.Getenv("ANILIST_USERNAME"))
+	userId, err := getUserID(os.Getenv("ANILIST_USERNAME"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	activity, err := GetLastActivity(userId)
+	activity, err := getLastActivity(userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -23,7 +23,7 @@ func ControllerGetLastActivity(w http.ResponseWriter, r *http.Request) {
 
 func ControllerGetFavoriteAnimes(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
-	animes, err := GetFavoritesAnime(username)
+	animes, err := getFavoritesAnime(username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -34,7 +34,7 @@ func ControllerGetFavoriteAnimes(w http.ResponseWriter, r *http.Request) {
 
 func ControllerGetFavoriteMangas(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
-	mangas, err := GetFavoritesManga(username)
+	mangas, err := getFavoritesManga(username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -45,7 +45,7 @@ func ControllerGetFavoriteMangas(w http.ResponseWriter, r *http.Request) {
 
 func ControllerGetFavoriteCharacters(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
-	characters, err := GetFavoritesCharacters(username)
+	characters, err := getFavoritesCharacters(username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -56,7 +56,7 @@ func ControllerGetFavoriteCharacters(w http.ResponseWriter, r *http.Request) {
 
 func ControllerGetFavoriteStaff(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
-	staff, err := GetFavoritesStaff(username)
+	staff, err := getFavoritesStaff(username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -67,7 +67,7 @@ func ControllerGetFavoriteStaff(w http.ResponseWriter, r *http.Request) {
 
 func ControllerGetFavoriteStudio(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
-	studios, err := GetFavoritesStudio(username)
+	studios, err := getFavoritesStudio(username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

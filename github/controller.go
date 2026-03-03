@@ -7,7 +7,7 @@ import (
 )
 
 func ControllerProfile(w http.ResponseWriter, r *http.Request) {
-	profile, err := GetUser(os.Getenv("GITHUB_LOGIN"))
+	profile, err := getUser(os.Getenv("GITHUB_LOGIN"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -17,7 +17,7 @@ func ControllerProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func ControllerRepo(w http.ResponseWriter, r *http.Request) {
-	profile, err := GetLastRepo(os.Getenv("GITHUB_LOGIN"))
+	profile, err := getLastRepo(os.Getenv("GITHUB_LOGIN"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

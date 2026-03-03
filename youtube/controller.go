@@ -6,7 +6,7 @@ import (
 )
 
 func Controller(w http.ResponseWriter, r *http.Request) {
-	video, err := GetLastVideo()
+	video, err := getLastVideo()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

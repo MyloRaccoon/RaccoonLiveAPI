@@ -8,8 +8,8 @@ import (
 
 const URL = "https://graphql.anilist.co"
 
-func GetUserID(username string) (int, error) {
-	query := GetUserIDQuery
+func getUserID(username string) (int, error) {
+	query := getUserIDQuery
 	variables := map[string]any{
 		"name": username,
 	}
@@ -39,8 +39,8 @@ func GetUserID(username string) (int, error) {
 	return result.Data.User.ID, nil
 }
 
-func GetLastActivity(userID int) (AnilistActivity, error) {
-	query := GetLastActivityQuery
+func getLastActivity(userID int) (AnilistActivity, error) {
+	query := getLastActivityQuery
 	variables := map[string]any {
 		"userId": userID,
 	}
@@ -91,8 +91,8 @@ func GetLastActivity(userID int) (AnilistActivity, error) {
 	}, nil
 }
 
-func GetFavoritesAnime(username string) ([]Anime, error) {
-	query := GetFavoritesAnimeQuery
+func getFavoritesAnime(username string) ([]Anime, error) {
+	query := getFavoritesAnimeQuery
 	variables := map[string]any{
 		"username": username,
 	}
@@ -146,8 +146,8 @@ func GetFavoritesAnime(username string) ([]Anime, error) {
 	return favs, nil
 }
 
-func GetFavoritesManga(username string) ([]Manga, error) {
-	query := GetFavoritesMangaQuery
+func getFavoritesManga(username string) ([]Manga, error) {
+	query := getFavoritesMangaQuery
 	variables := map[string]any{
 		"username": username,
 	}
@@ -201,8 +201,8 @@ func GetFavoritesManga(username string) ([]Manga, error) {
 	return favs, nil
 }
 
-func GetFavoritesCharacters(username string) ([]Character, error) {
-	query := GetFavoritesCharactersQuery
+func getFavoritesCharacters(username string) ([]Character, error) {
+	query := getFavoritesCharactersQuery
 	variables := map[string]any{
 		"username": username,
 	}
@@ -280,8 +280,8 @@ func GetFavoritesCharacters(username string) ([]Character, error) {
 	return favs, nil
 }
 
-func GetFavoritesStaff(username string) ([]Staff, error) {
-	query := GetFavoritesStaffQuery
+func getFavoritesStaff(username string) ([]Staff, error) {
+	query := getFavoritesStaffQuery
 	variables := map[string]any{
 		"username": username,
 	}
@@ -331,8 +331,8 @@ func GetFavoritesStaff(username string) ([]Staff, error) {
 	return favs, nil
 }
 
-func GetFavoritesStudio(username string) ([]Studio, error) {
-	query := GetFavoritesStudiosQuery
+func getFavoritesStudio(username string) ([]Studio, error) {
+	query := getFavoritesStudiosQuery
 	variables := map[string]any{
 		"username": username,
 	}

@@ -8,22 +8,7 @@ import (
 	"os"
 )
 
-type GithubProfile struct {
-	Name string `json:"login"`
-	Avatar string `json:"avatar_url"`
-	ID int `json:"id"`
-	URL string `json:"html_url"`
-}
-
-type GithubRepo struct {
-	ID int `json:"id"`
-	Name string `json:"name"`
-	Description string `json:"description"`
-	Language string `json:"language"`
-	URL string `json:"html_url"`
-}
-
-func GetUser(login string) (GithubProfile, error) {
+func getUser(login string) (GithubProfile, error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	req, _ := http.NewRequest("GET", "https://api.github.com/users/" + login, nil)
@@ -43,7 +28,7 @@ func GetUser(login string) (GithubProfile, error) {
 	return result, nil
 }
 
-func GetLastRepo(login string) (GithubRepo, error) {
+func getLastRepo(login string) (GithubRepo, error) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	url := "https://api.github.com/users/"  + login + "/repos?sort=created&direction=desc&per_page=1"
