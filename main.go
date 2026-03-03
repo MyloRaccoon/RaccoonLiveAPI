@@ -20,6 +20,17 @@ import (
 	"raccoonlive-api/youtube"
 )
 
+func apiKeyMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		key := r.Header.Get("X-Api-Key")
+		if key != os.Getenv("API_KEY") {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -165,19 +176,37 @@ func main() {
 		json.NewEncoder(w).Encode(music)
 	}).Methods("GET")
 
-	router.HandleFunc("/music", func(w http.ResponseWriter, r *http.Request) {
-		var m music.Music
-		json.NewDecoder(r.Body).Decode(&m)
+	router.Handle("/music", apiKeyMiddleware(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				var m music.Music
+				json.NewDecoder(r.Body).Decode(&m)
 
-		err := music.PostMusic(m)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+				err := music.PostMusic(m)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
 
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-	})
+				w.WriteHeader(http.StatusOK)
+				json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	}))).Methods("POST")
+
+	router.Handle("/music/{id}", apiKeyMiddleware(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				vars := mux.Vars(r)
+				id := vars["id"]
+
+				music, err := music.DeleteMusicById(id)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(music)
+	}))).Methods("DELETE")
 
 	server := &http.Server{Addr: ":8080", Handler: router}
 
