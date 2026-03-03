@@ -3,37 +3,32 @@ package music
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"os"
 )
 
 func saveMusic(musics []Music) error {
 	data, err := json.Marshal(musics)
 	if err != nil {
-		log.Fatal("Error while encoding musics: ", err)
 		return err
 	}
 
 	err = os.WriteFile("./music/musics.json", data, 0644)
 	if err != nil {
-		log.Fatal("Error while saving musics: ", err)
+		return err
 	}
 	return err
 }
 
 func getMusics() ([]Music, error) {
 
-	data, err := ioutil.ReadFile("./music/musics.json")
+	data, err := os.ReadFile("./music/musics.json")
 	if err != nil {
-		log.Fatal("Error when opening musics file: ", err)
 		return []Music{}, err
 	}
 
 	var musics []Music
 	err = json.Unmarshal(data, &musics)
 	if err != nil {
-		log.Fatal("Error during unmarshaling: ", err)
 		return []Music{}, err
 	}
 
@@ -43,7 +38,6 @@ func getMusics() ([]Music, error) {
 func getMusicById(id string) (Music, error) {
 	musics, err := getMusics()
 	if err != nil {
-		log.Fatal("Error getting music: %s", err)
 		return Music{}, err
 	}
 	for _, music := range musics {
@@ -57,7 +51,6 @@ func getMusicById(id string) (Music, error) {
 func postMusic(music Music) error {
 	musics, err := getMusics()
 	if err != nil {
-		log.Fatal("Error getting musics: ", err)
 		return err
 	}
 
@@ -69,7 +62,6 @@ func postMusic(music Music) error {
 func deleteMusicById(id string) (Music, error) {
 	musics, err := getMusics()
 	if err != nil {
-		log.Fatal("Error getting musics: ", err)
 		return Music{}, err
 	}
 
@@ -86,7 +78,6 @@ func deleteMusicById(id string) (Music, error) {
 
 	err = saveMusic(new_musics)
 	if err != nil {
-		log.Fatal("Error saving musics: ", err)
 		return Music{}, err
 	}
 

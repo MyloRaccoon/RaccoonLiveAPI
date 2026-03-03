@@ -31,14 +31,16 @@ func apiKeyMiddleware(next http.Handler) http.Handler {
 }
 
 func main() {
+	fmt.Println("Starting server...")
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 		return
 	}
 
-	bot := discord.Run()
-	if bot == nil {
+	bot, err := discord.Run()
+	if err != nil {
+		fmt.Println("Error starting Discord bot: ", err)
 		return
 	}
 	defer bot.Close()

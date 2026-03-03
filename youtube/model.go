@@ -3,7 +3,6 @@ package youtube
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -17,7 +16,6 @@ const POOLING_MAX = 10
 func getLastVideo() (YoutubeVideo, error) {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
 		return YoutubeVideo{}, err
 	}
 
@@ -28,7 +26,6 @@ func getLastVideo() (YoutubeVideo, error) {
 
 	service, err := youtube.NewService(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
-		log.Fatalf("Error creation service: %v", err)
 		return YoutubeVideo{}, err
 	}
 
@@ -39,7 +36,6 @@ func getLastVideo() (YoutubeVideo, error) {
 
 	resp, err := call.Do()
 	if err != nil {
-		log.Fatalf("Error calling API: %v", err)
 		return YoutubeVideo{}, err
 	}
 

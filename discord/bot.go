@@ -2,26 +2,23 @@ package discord
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 )
 
-func Run() *discordgo.Session {
+func Run() (*discordgo.Session, error) {
 	println("Connecting bot...")
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
-		return nil
+		return nil, err
 	}
 	token := os.Getenv("DISCORD_TOKEN")
 
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
-		fmt.Println("Error creating Discord sessions: ", err)
-		return nil
+		return nil,err
 	}
 
 	dg.AddHandler(messageCreate)
@@ -33,12 +30,11 @@ func Run() *discordgo.Session {
 
 	err = dg.Open()
 	if err != nil {
-		fmt.Println("Error opening connection: ", err)
-		return nil
+		return nil, err
 	}
 	println("bot connected!")
 
-	return dg
+	return dg, nil
 }
 
 func presenceUpdate(s *discordgo.Session, p *discordgo.PresenceUpdate) {
@@ -52,13 +48,9 @@ func presenceUpdate(s *discordgo.Session, p *discordgo.PresenceUpdate) {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	fmt.Printf("[%s] %s ", m.Author.Username, m.Content)
-
 	if m.Author.ID == s.State.User.ID {
-		fmt.Println("Self message: abort")
 		return
 	}
-
 	msg := ""
 	if m.Content != "&remove" {
 		user := m.Author

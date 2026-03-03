@@ -17,7 +17,6 @@ func getUser(login string) (GithubProfile, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Println("Error while getting profile")
 		return GithubProfile{}, err
 	}
 	defer resp.Body.Close()
