@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
@@ -19,6 +20,8 @@ type YoutubeVideo struct {
 	ID string
 	URL string
 }
+
+const POOLING_MAX = 10
 
 func GetLastVideo() (YoutubeVideo, error) {
 	err := godotenv.Load()
@@ -41,7 +44,7 @@ func GetLastVideo() (YoutubeVideo, error) {
 	uploadsPlaylistID := "UU" + channelID[2:]
 	call := service.PlaylistItems.List([]string{"snippet"}).
 		PlaylistId(uploadsPlaylistID).
-		MaxResults(1)
+		MaxResults(POOLING_MAX)
 
 	resp, err := call.Do()
 	if err != nil {
@@ -49,17 +52,27 @@ func GetLastVideo() (YoutubeVideo, error) {
 		return YoutubeVideo{}, err
 	}
 
-	videoData := resp.Items[0]
-	snippet := videoData.Snippet
-
-	video := YoutubeVideo{
-		Title: snippet.Title,
-		Date: snippet.PublishedAt,
-		Description: snippet.Description,
-		Thumbnail: snippet.Thumbnails.High.Url,
-		ID: snippet.ResourceId.VideoId,
-		URL: fmt.Sprintf("https://www.youtube.com/watch?v=%s", snippet.ResourceId.VideoId),
+	videoIDs := make([]string, 0, len(resp.Items))
+	for _, item := range resp.Items {
+		videoIDs = append(videoIDs, item.Snippet.ResourceId.VideoId)
 	}
 
-	return video, nil
+	videosCall := service.Videos.List([]string{"snippet", "liveStreamingDetails"}).
+		Id(strings.Join(videoIDs, ","))
+	videosResponse, err := videosCall.Do()
+
+	for _, videoData := range videosResponse.Items {
+		if videoData.LiveStreamingDetails == nil {
+			return YoutubeVideo {
+				Title: videoData.Snippet.Title,
+				Date: videoData.Snippet.PublishedAt,
+				Description: videoData.Snippet.Description,
+				Thumbnail: videoData.Snippet.Thumbnails.High.Url,
+				ID: videoData.Id,
+				URL: fmt.Sprintf("https://www.youtube.com/watch?v=%s", videoData.Id),
+			}, nil
+		}
+	}
+
+	return YoutubeVideo{}, nil
 }
