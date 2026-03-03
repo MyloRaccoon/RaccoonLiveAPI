@@ -46,167 +46,37 @@ func main() {
 
 	router := mux.NewRouter()
 	
-	router.HandleFunc("/discord", func(w http.ResponseWriter, r *http.Request) {
-		discord.Status.MU.RLock()
-		defer discord.Status.MU.RUnlock()
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(&discord.Status)
-	}).Methods("GET")
+	router.HandleFunc("/discord", discord.Controller).Methods("GET")
 
-	router.HandleFunc("/anilist", func(w http.ResponseWriter, r *http.Request) {
-		userId, err := anilist.GetUserID(os.Getenv("ANILIST_USERNAME"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		activity, err := anilist.GetLastActivity(userId)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(activity)
-	}).Methods("GET")
+	router.HandleFunc("/anilist", anilist.ControllerGetLastActivity).Methods("GET")
 
-	router.HandleFunc("/anilist/animes", func(w http.ResponseWriter, r *http.Request) {
-		username := os.Getenv("ANILIST_USERNAME")
-		animes, err := anilist.GetFavoritesAnime(username)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(animes)
-	}).Methods("GET")
+	router.HandleFunc("/anilist/animes", anilist.ControllerGetFavoriteAnimes).Methods("GET")
 
-	router.HandleFunc("/anilist/mangas", func(w http.ResponseWriter, r *http.Request) {
-		username := os.Getenv("ANILIST_USERNAME")
-		mangas, err := anilist.GetFavoritesManga(username)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(mangas)
-	}).Methods("GET")
+	router.HandleFunc("/anilist/mangas", anilist.ControllerGetFavoriteMangas).Methods("GET")
 
-	router.HandleFunc("/anilist/characters", func(w http.ResponseWriter, r *http.Request) {
-		username := os.Getenv("ANILIST_USERNAME")
-		characters, err := anilist.GetFavoritesCharacters(username)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(characters)
-	}).Methods("GET")
+	router.HandleFunc("/anilist/characters", anilist.ControllerGetFavoriteCharacters).Methods("GET")
 
-	router.HandleFunc("/anilist/staff", func(w http.ResponseWriter, r *http.Request) {
-		username := os.Getenv("ANILIST_USERNAME")
-		staff, err := anilist.GetFavoritesStaff(username)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(staff)
-	}).Methods("GET")
+	router.HandleFunc("/anilist/staff", anilist.ControllerGetFavoriteStaff).Methods("GET")
 
-	router.HandleFunc("/anilist/studios", func(w http.ResponseWriter, r *http.Request) {
-		username := os.Getenv("ANILIST_USERNAME")
-		studios, err := anilist.GetFavoritesStudio(username)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(studios)
-	}).Methods("GET")
+	router.HandleFunc("/anilist/studios", anilist.ControllerGetFavoriteStudio).Methods("GET")
 
-	router.HandleFunc("/youtube", func(w http.ResponseWriter, r *http.Request) {
-		video, err := youtube.GetLastVideo()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(video)
-	}).Methods("GET")
+	router.HandleFunc("/youtube", youtube.Controller).Methods("GET")
 
-	router.HandleFunc("/github/profile", func(w http.ResponseWriter, r *http.Request) {
-		profile, err := github.GetUser(os.Getenv("GITHUB_LOGIN"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(profile)
-	}).Methods("GET")
+	router.HandleFunc("/github/profile", github.ControllerProfile).Methods("GET")
 
-	router.HandleFunc("/github/repo", func(w http.ResponseWriter, r *http.Request) {
-		profile, err := github.GetLastRepo(os.Getenv("GITHUB_LOGIN"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(profile)
-	}).Methods("GET")
+	router.HandleFunc("/github/repo", github.ControllerRepo).Methods("GET")
 
-	router.HandleFunc("/musics", func(w http.ResponseWriter, r *http.Request) {
-		musics, err := music.GetMusics()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(musics)
-	}).Methods("GET")
+	router.HandleFunc("/musics", music.ControllerGetMusics).Methods("GET")
 
-	router.HandleFunc("/music/{id}", func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		id := vars["id"]
+	router.HandleFunc("/music/{id}", music.ControllerGetMusicByID).Methods("GET")
 
-		music, err := music.GetMusicById(id)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(music)
-	}).Methods("GET")
+	router.Handle("/music", 
+		apiKeyMiddleware(http.HandlerFunc(music.ControllerPostMusic))).
+		Methods("POST")
 
-	router.Handle("/music", apiKeyMiddleware(
-		http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				var m music.Music
-				json.NewDecoder(r.Body).Decode(&m)
-
-				err := music.PostMusic(m)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-
-				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-	}))).Methods("POST")
-
-	router.Handle("/music/{id}", apiKeyMiddleware(
-		http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				vars := mux.Vars(r)
-				id := vars["id"]
-
-				music, err := music.DeleteMusicById(id)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				json.NewEncoder(w).Encode(music)
-	}))).Methods("DELETE")
+	router.Handle("/music/{id}", 
+		apiKeyMiddleware(http.HandlerFunc(music.ControllerDeleteMusic))).
+		Methods("DELETE")
 
 	server := &http.Server{Addr: ":8080", Handler: router}
 
