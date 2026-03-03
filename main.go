@@ -40,7 +40,7 @@ func main() {
 		defer discord.Status.MU.RUnlock()
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(&discord.Status)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/anilist", func(w http.ResponseWriter, r *http.Request) {
 		userId, err := anilist.GetUserID(os.Getenv("ANILIST_USERNAME"))
@@ -55,7 +55,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(activity)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/anilist/animes", func(w http.ResponseWriter, r *http.Request) {
 		username := os.Getenv("ANILIST_USERNAME")
@@ -66,7 +66,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(animes)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/anilist/mangas", func(w http.ResponseWriter, r *http.Request) {
 		username := os.Getenv("ANILIST_USERNAME")
@@ -77,7 +77,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(mangas)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/anilist/characters", func(w http.ResponseWriter, r *http.Request) {
 		username := os.Getenv("ANILIST_USERNAME")
@@ -88,7 +88,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(characters)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/anilist/staff", func(w http.ResponseWriter, r *http.Request) {
 		username := os.Getenv("ANILIST_USERNAME")
@@ -99,7 +99,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(staff)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/anilist/studios", func(w http.ResponseWriter, r *http.Request) {
 		username := os.Getenv("ANILIST_USERNAME")
@@ -110,7 +110,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(studios)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/youtube", func(w http.ResponseWriter, r *http.Request) {
 		video, err := youtube.GetLastVideo()
@@ -120,7 +120,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(video)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/github/profile", func(w http.ResponseWriter, r *http.Request) {
 		profile, err := github.GetUser(os.Getenv("GITHUB_LOGIN"))
@@ -130,7 +130,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(profile)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/github/repo", func(w http.ResponseWriter, r *http.Request) {
 		profile, err := github.GetLastRepo(os.Getenv("GITHUB_LOGIN"))
@@ -140,7 +140,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(profile)
-	})
+	}).Methods("GET")
 
 	router.HandleFunc("/musics", func(w http.ResponseWriter, r *http.Request) {
 		musics, err := music.GetMusics()
@@ -150,6 +150,33 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(musics)
+	}).Methods("GET")
+
+	router.HandleFunc("/music/{id}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id := vars["id"]
+
+		music, err := music.GetMusicById(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(music)
+	}).Methods("GET")
+
+	router.HandleFunc("/music", func(w http.ResponseWriter, r *http.Request) {
+		var m music.Music
+		json.NewDecoder(r.Body).Decode(&m)
+
+		err := music.PostMusic(m)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	})
 
 	server := &http.Server{Addr: ":8080", Handler: router}

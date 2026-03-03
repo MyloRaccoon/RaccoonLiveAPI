@@ -56,7 +56,7 @@ func PostMusic(music Music) error {
 		return err
 	}
 
-	err = os.WriteFile("./music/musics", data, 0644)
+	err = os.WriteFile("./music/musics.json", data, 0644)
 	if err != nil {
 		log.Fatal("Error while saving musics: ", err)
 	}
