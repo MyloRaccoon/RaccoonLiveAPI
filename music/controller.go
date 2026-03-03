@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func ControllerGetMusics(w http.ResponseWriter, r *http.Request) {
+func GetMusicsController(w http.ResponseWriter, r *http.Request) {
 	musics, err := getMusics()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -17,7 +17,7 @@ func ControllerGetMusics(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(musics)
 }
 
-func ControllerGetMusicByID(w http.ResponseWriter, r *http.Request) {
+func GetMusicByIDController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
@@ -30,7 +30,7 @@ func ControllerGetMusicByID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(music)
 }
 
-func ControllerPostMusic(w http.ResponseWriter, r *http.Request) {
+func PostMusicController(w http.ResponseWriter, r *http.Request) {
 	var m Music
 	json.NewDecoder(r.Body).Decode(&m)
 
@@ -44,7 +44,7 @@ func ControllerPostMusic(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
 
-func ControllerDeleteMusic(w http.ResponseWriter, r *http.Request) {
+func DeleteMusicController(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
