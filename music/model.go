@@ -49,6 +49,10 @@ func getMusicById(id string) (Music, error) {
 }
 
 func postMusic(music Music) error {
+	if _, err := getMusicById(music.ID); err == nil {
+		return fmt.Errorf("Error posting music: id '%s' already exists.", music.ID)
+	}
+
 	musics, err := getMusics()
 	if err != nil {
 		return err
