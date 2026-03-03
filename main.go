@@ -16,6 +16,7 @@ import (
 	"raccoonlive-api/anilist"
 	"raccoonlive-api/discord"
 	"raccoonlive-api/github"
+	"raccoonlive-api/music"
 	"raccoonlive-api/youtube"
 )
 
@@ -139,6 +140,16 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(profile)
+	})
+
+	router.HandleFunc("/musics", func(w http.ResponseWriter, r *http.Request) {
+		musics, err := music.GetMusics()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(musics)
 	})
 
 	server := &http.Server{Addr: ":8080", Handler: router}

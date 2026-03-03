@@ -1,0 +1,16 @@
+[
+	{
+		"id": "idk",
+		"title": "Cool Music Title",
+		"artist": "Cool artist",
+		"cover": "Cool cover",
+		"URL": "https://www.youtube.com/watch?v=hbHLnQAXfwY",
+		"listenDate": {
+			"hour": 13,
+			"minute": 53,
+			"day": 3,
+			"month": 3,
+			"year": 2026
+		}
+	}
+]
