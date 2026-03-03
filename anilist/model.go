@@ -9,13 +9,7 @@ import (
 const URL = "https://graphql.anilist.co"
 
 func GetUserID(username string) (int, error) {
-	query := `
-	query ($name: String!) {
-		User(name: $name) {
-			id
-		}
-	}
-	`
+	query := GetUserIDQuery
 	variables := map[string]any{
 		"name": username,
 	}
@@ -46,23 +40,7 @@ func GetUserID(username string) (int, error) {
 }
 
 func GetLastActivity(userID int) (AnilistActivity, error) {
-	query := `
-	query ($userId: Int) {
-	  Page(page: 1, perPage: 2) {
-		activities(userId: $userId, sort: ID_DESC, type: MEDIA_LIST) {
-		  ... on ListActivity {
-		    id
-			status
-			progress
-			media {
-			  title { romaji }
-			  siteUrl
-			}
-		  }
-		}
-	  }
-	}
-	`
+	query := GetLastActivityQuery
 	variables := map[string]any {
 		"userId": userID,
 	}
@@ -109,43 +87,12 @@ func GetLastActivity(userID int) (AnilistActivity, error) {
 		Title: title,
 		Status: status,
 		Progress: progress,
-		SiteUrl: siteUrl,
+		SiteURL: siteUrl,
 	}, nil
 }
 
-type Anime struct {
-	ID int
-	Title string
-	Cover string
-	Genres []string
-
-}
-
 func GetFavoritesAnime(username string) ([]Anime, error) {
-	query := `
-	query GetUserFavorites($username: String!) {
-		User(name: $username) {
-			name
-			favourites {
-				anime {
-					nodes {
-						id
-						title {
-							romaji
-							english
-							native
-						}
-						coverImage {
-							large
-						}
-						averageScore
-						genres
-					}
-				}
-			}
-		}
-	}
-	`
+	query := GetFavoritesAnimeQuery
 	variables := map[string]any{
 		"username": username,
 	}
@@ -174,6 +121,7 @@ func GetFavoritesAnime(username string) ([]Anime, error) {
 								Large string `json:"large"`
 							} `json:"coverImage"`
 							Genres []string `json:"genres"`
+							SiteURL string `json:"siteUrl"`
 						} `json:"nodes"`
 					} `json:"anime"`
 				} `json:"favourites"`
@@ -191,6 +139,239 @@ func GetFavoritesAnime(username string) ([]Anime, error) {
 			Title: animeData.Title.Romaji,
 			Cover: animeData.CoverImage.Large,
 			Genres: animeData.Genres,
+			SiteURL: animeData.SiteURL,
+		})
+	}
+
+	return favs, nil
+}
+
+func GetFavoritesManga(username string) ([]Manga, error) {
+	query := GetFavoritesMangaQuery
+	variables := map[string]any{
+		"username": username,
+	}
+	body, _ := json.Marshal(map[string]any{
+		"query": query,
+		"variables": variables,
+	})
+
+	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		return []Manga{}, err
+	}
+	defer resp.Body.Close()
+
+	var data struct {
+		Data struct {
+			User struct {
+				Favourites struct {
+					Manga struct {
+						Nodes []struct {
+							ID int `json:"id"`
+							Title struct {
+								Romaji string `json:"romaji"`
+							} `json:"title"`
+							CoverImage struct {
+								Large string `json:"large"`
+							} `json:"coverImage"`
+							Genres []string `json:"genres"`
+							SiteURL string `json:"siteUrl"`
+						} `json:"nodes"`
+					} `json:"manga"`
+				} `json:"favourites"`
+			} `json:"user"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return []Manga{}, err
+	}
+
+	favs := []Manga{}
+	for _, mangaData := range data.Data.User.Favourites.Manga.Nodes {
+		favs = append(favs, Manga{
+			ID: mangaData.ID,
+			Title: mangaData.Title.Romaji,
+			Cover: mangaData.CoverImage.Large,
+			Genres: mangaData.Genres,
+			SiteURL: mangaData.SiteURL,
+		})
+	}
+
+	return favs, nil
+}
+
+func GetFavoritesCharacters(username string) ([]Character, error) {
+	query := GetFavoritesCharactersQuery
+	variables := map[string]any{
+		"username": username,
+	}
+	body, _ := json.Marshal(map[string]any{
+		"query": query,
+		"variables": variables,
+	})
+
+	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		return []Character{}, err
+	}
+	defer resp.Body.Close()
+
+	var data struct {
+		Data struct {
+			User struct {
+				Favourites struct {
+					Characters struct {
+						Nodes []struct {
+							ID int `json:"id"`
+							Name struct {
+								Full string `json:"full"`
+							} `json:"name"`
+							Description string `json:"Description"`
+							Gender string `json:"gender"`
+							DateOfBirth struct {
+								Year int `json:"year"`
+								Month int `json:"month"`
+								Day int `json:"day"`
+							} `json:"dateOfBirth"`
+							Age string `json:"age"`
+							BloodType string `json:"bloodType"`
+							Image struct {
+								Large string `json:"large"`
+							} `json:"image"`
+							SiteURL string `json:"siteUrl"`
+							Media struct {
+								Nodes []struct {
+									ID int `json:"id"`
+									Title struct {
+										Romaji string `json:"romaji"`
+									} `json:"title"`
+									SiteURL string `json:"siteUrl"`
+								} `json:"nodes"`
+							} `json:"media"`
+						} `json:"nodes"`
+					} `json:"characters"`
+				} `json:"favourites"`
+			} `json:"user"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return []Character{}, err
+	}
+
+	favs := []Character{}
+	for _, charData := range data.Data.User.Favourites.Characters.Nodes {
+		mediaData := charData.Media.Nodes[0]
+		favs = append(favs, Character{
+			ID: charData.ID,
+			Name: charData.Name.Full,
+			Age: charData.Age,
+			Gender: charData.Gender,
+			BloodType: charData.BloodType,
+			Description: charData.Description,
+			Image: charData.Image.Large,
+			SiteURL: charData.SiteURL,
+			MediaID: mediaData.ID,
+			MediaTitle: mediaData.Title.Romaji,
+			MediaURL: mediaData.SiteURL,
+		})
+	}
+
+	return favs, nil
+}
+
+func GetFavoritesStaff(username string) ([]Staff, error) {
+	query := GetFavoritesStaffQuery
+	variables := map[string]any{
+		"username": username,
+	}
+	body, _ := json.Marshal(map[string]any{
+		"query": query,
+		"variables": variables,
+	})
+
+	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		return []Staff{}, err
+	}
+	defer resp.Body.Close()
+
+	var data struct {
+		Data struct {
+			User struct {
+				Favourites struct {
+					Staff struct {
+						Nodes []struct {
+							ID int `json:"id"`
+							Name struct {
+								Full string `json:"full"`
+							} `json:"name"`
+							Description string `json:"Description"`
+							SiteURL string `json:"siteUrl"`
+						} `json:"nodes"`
+					} `json:"staff"`
+				} `json:"favourites"`
+			} `json:"user"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return []Staff{}, err
+	}
+
+	favs := []Staff{}
+	for _, staffData := range data.Data.User.Favourites.Staff.Nodes {
+		favs = append(favs, Staff{
+			ID: staffData.ID,
+			Name: staffData.Name.Full,
+			Description: staffData.Description,
+			SiteURL: staffData.SiteURL,
+		})
+	}
+
+	return favs, nil
+}
+
+func GetFavoritesStudio(username string) ([]Studio, error) {
+	query := GetFavoritesStudiosQuery
+	variables := map[string]any{
+		"username": username,
+	}
+	body, _ := json.Marshal(map[string]any{
+		"query": query,
+		"variables": variables,
+	})
+
+	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		return []Studio{}, err
+	}
+	defer resp.Body.Close()
+
+	var data struct {
+		Data struct {
+			User struct {
+				Favourites struct {
+					Studios struct {
+						Nodes []struct {
+							ID int `json:"id"`
+							Name string `json:"name"`
+							SiteURL string `json:"siteUrl"`
+						} `json:"nodes"`
+					} `json:"studios"`
+				} `json:"favourites"`
+			} `json:"user"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return []Studio{}, err
+	}
+
+	favs := []Studio{}
+	for _, staffData := range data.Data.User.Favourites.Studios.Nodes {
+		favs = append(favs, Studio{
+			ID: staffData.ID,
+			Name: staffData.Name,
+			SiteURL: staffData.SiteURL,
 		})
 	}
 

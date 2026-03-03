@@ -56,7 +56,7 @@ func main() {
 		json.NewEncoder(w).Encode(activity)
 	})
 
-	router.HandleFunc("/anilist/anime", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/anilist/animes", func(w http.ResponseWriter, r *http.Request) {
 		username := os.Getenv("ANILIST_USERNAME")
 		animes, err := anilist.GetFavoritesAnime(username)
 		if err != nil {
@@ -65,6 +65,50 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(animes)
+	})
+
+	router.HandleFunc("/anilist/mangas", func(w http.ResponseWriter, r *http.Request) {
+		username := os.Getenv("ANILIST_USERNAME")
+		mangas, err := anilist.GetFavoritesManga(username)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(mangas)
+	})
+
+	router.HandleFunc("/anilist/characters", func(w http.ResponseWriter, r *http.Request) {
+		username := os.Getenv("ANILIST_USERNAME")
+		characters, err := anilist.GetFavoritesCharacters(username)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(characters)
+	})
+
+	router.HandleFunc("/anilist/staff", func(w http.ResponseWriter, r *http.Request) {
+		username := os.Getenv("ANILIST_USERNAME")
+		staff, err := anilist.GetFavoritesStaff(username)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(staff)
+	})
+
+	router.HandleFunc("/anilist/studios", func(w http.ResponseWriter, r *http.Request) {
+		username := os.Getenv("ANILIST_USERNAME")
+		studios, err := anilist.GetFavoritesStudio(username)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(studios)
 	})
 
 	router.HandleFunc("/youtube", func(w http.ResponseWriter, r *http.Request) {
