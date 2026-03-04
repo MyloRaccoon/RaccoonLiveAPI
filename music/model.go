@@ -91,3 +91,39 @@ func deleteMusicById(id string) (Music, error) {
 
 	return removed_music, nil
 }
+
+func editMusic(e_music Music) error {
+	musics, err := getMusics()
+	if err != nil {
+		return err
+	}
+
+	idx := -1
+	for i, music := range musics {
+		if music.ID == e_music.ID {
+			idx = i
+			break
+		}
+	}
+	if idx == -1 {
+		return fmt.Errorf("Error editing music: id '%s' doesn't exists", e_music.ID)
+	}
+
+	music := &musics[idx]
+	if e_music.Title != "" {
+		music.Title = e_music.Title
+	}
+	if e_music.Artist != "" {
+		music.Artist = e_music.Artist
+	}
+	if e_music.Cover != "" {
+		music.Cover = e_music.Cover
+	}
+	if e_music.URL != "" {
+		music.URL = e_music.URL
+	}
+	if e_music.ListenDate != (Date{}) {
+		music.ListenDate = e_music.ListenDate
+	}
+	return saveMusic(musics)
+}

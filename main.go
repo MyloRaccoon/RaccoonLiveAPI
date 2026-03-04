@@ -72,12 +72,16 @@ func main() {
 	router.HandleFunc("/music/{id}", music.GetMusicByIDController).Methods("GET")
 
 	router.Handle("/music", 
-		apiKeyMiddleware(http.HandlerFunc(music.PostMusicController))).
-		Methods("POST")
+		apiKeyMiddleware(http.HandlerFunc(music.PutMusicController))).
+		Methods("PUT")
 
 	router.Handle("/music/{id}", 
 		apiKeyMiddleware(http.HandlerFunc(music.DeleteMusicController))).
 		Methods("DELETE")
+
+	router.Handle("/music/{id}",
+		apiKeyMiddleware(http.HandlerFunc(music.PatchMusicController))).
+		Methods("PATCH")
 
 	server := &http.Server{Addr: ":8080", Handler: router}
 
