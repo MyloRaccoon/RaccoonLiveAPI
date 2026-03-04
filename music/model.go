@@ -48,7 +48,7 @@ func getMusicById(id string) (Music, error) {
 	return Music{}, fmt.Errorf("Error getting music: id '%s' doesn't exists.", id)
 }
 
-func postMusic(music Music) error {
+func putMusic(music Music) error {
 	if _, err := getMusicById(music.ID); err == nil {
 		return fmt.Errorf("Error posting music: id '%s' already exists.", music.ID)
 	}
@@ -92,7 +92,7 @@ func deleteMusicById(id string) (Music, error) {
 	return removed_music, nil
 }
 
-func editMusic(e_music Music) error {
+func patchMusic(e_music Music) error {
 	musics, err := getMusics()
 	if err != nil {
 		return err
