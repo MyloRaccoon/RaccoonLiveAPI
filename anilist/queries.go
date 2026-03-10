@@ -1,5 +1,22 @@
 package anilist
 
+const getProfileQuery = `
+query ($username: String!) {
+	User(name: $username) {
+		id
+		name
+		about
+		avatar {
+			large
+		}
+		bannerImage
+		siteUrl
+		createdAt
+		updatedAt
+	}
+}
+`
+
 const getUserIDQuery = `
 query ($name: String!) {
 	User(name: $name) {
@@ -27,7 +44,7 @@ query ($userId: Int) {
 `
 
 const getFavoritesAnimeQuery = `
-query GetUserFavorites($username: String!) {
+query ($username: String!) {
 	User(name: $username) {
 		name
 		favourites {
@@ -53,7 +70,7 @@ query GetUserFavorites($username: String!) {
 `
 
 const getFavoritesMangaQuery = `
-query GetUserFavorites($username: String!) {
+query ($username: String!) {
 	User(name: $username) {
 		name
 		favourites {
@@ -79,7 +96,7 @@ query GetUserFavorites($username: String!) {
 `
 
 const getFavoritesCharactersQuery = `
-query GetUserFavorites($username: String!) {
+query ($username: String!) {
 	User(name: $username) {
 		name
 		favourites {
@@ -120,7 +137,7 @@ query GetUserFavorites($username: String!) {
 `
 
 const getFavoritesStaffQuery = `
-query GetUserFavorites($username: String!) {
+query ($username: String!) {
 	User(name: $username) {
 		name
 		favourites {
@@ -141,7 +158,7 @@ query GetUserFavorites($username: String!) {
 `
 
 const getFavoritesStudiosQuery = `
-query GetUserFavorites($username: String!) {
+query ($username: String!) {
 	User(name: $username) {
 		name
 		favourites {

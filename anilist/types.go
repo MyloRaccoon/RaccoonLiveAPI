@@ -1,5 +1,16 @@
 package anilist
 
+type AnilistProfile struct {
+	ID int
+	Name string
+	About string
+	Avatar string
+	Banner string
+	SiteURL string
+	CreatedAt int
+	UpdatedAt int
+}
+
 type AnilistActivity struct {
 	Title string
 	Status string

@@ -49,22 +49,17 @@ func main() {
 	
 	router.HandleFunc("/discord", discord.Controller).Methods("GET")
 
-	router.HandleFunc("/anilist", anilist.GetLastActivityController).Methods("GET")
-
-	router.HandleFunc("/anilist/animes", anilist.GetFavoriteAnimesController).Methods("GET")
-
-	router.HandleFunc("/anilist/mangas", anilist.GetFavoriteMangasController).Methods("GET")
-
-	router.HandleFunc("/anilist/characters", anilist.GetFavoriteCharactersController).Methods("GET")
-
-	router.HandleFunc("/anilist/staff", anilist.GetFavoriteStaffController).Methods("GET")
-
-	router.HandleFunc("/anilist/studios", anilist.GetFavoriteStudioController).Methods("GET")
+	router.HandleFunc("/anilist", anilist.GetProfileController).Methods("GET")
+	router.HandleFunc("/anilist/activity", anilist.GetLastActivityController).Methods("GET")
+	router.HandleFunc("/anilist/fav/animes", anilist.GetFavoriteAnimesController).Methods("GET")
+	router.HandleFunc("/anilist/fav/mangas", anilist.GetFavoriteMangasController).Methods("GET")
+	router.HandleFunc("/anilist/fav/characters", anilist.GetFavoriteCharactersController).Methods("GET")
+	router.HandleFunc("/anilist/fav/staff", anilist.GetFavoriteStaffController).Methods("GET")
+	router.HandleFunc("/anilist/fav/studios", anilist.GetFavoriteStudioController).Methods("GET")
 
 	router.HandleFunc("/youtube", youtube.Controller).Methods("GET")
 
 	router.HandleFunc("/github/profile", github.ProfileController).Methods("GET")
-
 	router.HandleFunc("/github/repo", github.RepoController).Methods("GET")
 
 	router.HandleFunc("/musics", music.GetMusicsController).Methods("GET")

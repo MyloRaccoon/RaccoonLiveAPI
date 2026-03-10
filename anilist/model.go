@@ -21,6 +21,45 @@ func requestAnilist(query string, variables map[string]any, result any) error {
 	return json.NewDecoder(resp.Body).Decode(result)
 }
 
+func getProfile(username string) (AnilistProfile, error) {
+	query := getProfileQuery
+	variables := map[string]any{
+		"username": username,
+	}
+	var data struct {
+		Data struct {
+			User struct {
+				ID int `json:"id"`
+				Name string `json:"name"`
+				About string `json:"about"`
+				Avatar struct {
+					Large string `json:"large"`
+				} `json:"avatar"`
+				BannerImage string `json:"bannerImage"`
+				SiteURL string `json:"siteUrl"`
+				CreatedAt int `json:"createdAt"`
+				UpdatedAt int `json:"updatedAt"`
+			} `json:"user"`
+		} `json:"data"`
+	}
+
+	if err := requestAnilist(query, variables, &data); err != nil {
+		return AnilistProfile{}, err
+	}
+
+	userData := data.Data.User
+	return AnilistProfile{
+		ID: userData.ID,
+		Name: userData.Name,
+		About: userData.About,
+		Avatar: userData.Avatar.Large,
+		Banner: userData.BannerImage,
+		SiteURL: userData.SiteURL,
+		CreatedAt: userData.CreatedAt,
+		UpdatedAt: userData.UpdatedAt,
+	}, nil
+}
+
 func getUserID(username string) (int, error) {
 	query := getUserIDQuery
 	variables := map[string]any{

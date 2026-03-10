@@ -6,6 +6,17 @@ import (
 	"os"
 )
 
+func GetProfileController(w http.ResponseWriter, r *http.Request) {
+	username := os.Getenv("ANILIST_USERNAME")
+	profile, err := getProfile(username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(profile)
+}
+
 func GetLastActivityController(w http.ResponseWriter, r *http.Request) {
 	userId, err := getUserID(os.Getenv("ANILIST_USERNAME"))
 	if err != nil {
