@@ -317,7 +317,7 @@ func getFavoritesStaff(username string) ([]Staff, error) {
 	return favs, nil
 }
 
-func getFavoritesStudio(username string) ([]Studio, error) {
+func getFavoritesStudios(username string) ([]Studio, error) {
 	query := getFavoritesStudiosQuery
 	variables := map[string]any{
 		"username": username,

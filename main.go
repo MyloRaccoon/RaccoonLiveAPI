@@ -55,7 +55,7 @@ func main() {
 	router.HandleFunc("/anilist/fav/mangas", anilist.GetFavoriteMangasController).Methods("GET")
 	router.HandleFunc("/anilist/fav/characters", anilist.GetFavoriteCharactersController).Methods("GET")
 	router.HandleFunc("/anilist/fav/staff", anilist.GetFavoriteStaffController).Methods("GET")
-	router.HandleFunc("/anilist/fav/studios", anilist.GetFavoriteStudioController).Methods("GET")
+	router.HandleFunc("/anilist/fav/studios", anilist.GetFavoriteStudiosController).Methods("GET")
 
 	router.HandleFunc("/youtube", youtube.Controller).Methods("GET")
 
