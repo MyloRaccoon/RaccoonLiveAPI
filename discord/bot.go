@@ -43,8 +43,9 @@ func presenceUpdate(s *discordgo.Session, p *discordgo.PresenceUpdate) {
 		activity = p.Activities[0].Name
 	}
 	username := p.User.Username
+	displayName := p.User.DisplayName()
 	avatar := p.User.Avatar
-	updateStatus(username, avatar, activity, "")
+	updateStatus(username, displayName, avatar, activity, "")
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -53,20 +54,23 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	msg := ""
 	if m.Content != "&remove" {
-		user := m.Author
-		updateStatus(user.Username, user.Avatar, "", m.Content)
 		msg = fmt.Sprintf("Status updated to: '%s'", m.Content)
 	} else {
 		msg = "Status removed"
 	}
+	user := m.Author
+	updateStatus(user.Username, user.DisplayName(), user.Avatar, "", m.Content)
 	s.ChannelMessageSend(m.ChannelID, msg)
 }
 
-func updateStatus(username string, avatar string, activity string, status string) {
+func updateStatus(username string, displayName string, avatar string, activity string, status string) {
 	Status.MU.Lock()
 	defer Status.MU.Unlock()
 	if username != "" {
 		Status.Username = username
+	}
+	if displayName != "" {
+		Status.DisplayName = displayName
 	}
 	if avatar != "" {
 		Status.Avatar = avatar
@@ -74,9 +78,9 @@ func updateStatus(username string, avatar string, activity string, status string
 	if activity != "" {
 		Status.Activity = activity
 	}
-	if status != "" {
-		Status.Status = status
-	} else if status == "&remove" {
+	if status == "&remove" {
 		Status.Status = ""
-	}
+	} else if status != "" {
+		Status.Status = status
+	} 
 }
