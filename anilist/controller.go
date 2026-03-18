@@ -12,7 +12,7 @@ func GetProfileController(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
 	profile, err := getProfile(username)
 	if err != nil {
-		logger.Log("Error GET Anilist Profile: " + err.Error())
+		logger.Log("ERROR -  GET Anilist Profile: " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -29,7 +29,7 @@ func GetLastActivityController(w http.ResponseWriter, r *http.Request) {
 	}
 	activity, err := getLastActivity(userId)
 	if err != nil {
-		logger.Log("Error GET Anilist Activity: " + err.Error())
+		logger.Log("ERROR - GET Anilist Activity: " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -42,7 +42,7 @@ func GetFavoriteAnimesController(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
 	animes, err := getFavoritesAnime(username)
 	if err != nil {
-		logger.Log("Error GET Anilist Fav Animes: " + err.Error())
+		logger.Log("ERROR - GET Anilist Fav Animes: " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -55,7 +55,7 @@ func GetFavoriteMangasController(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
 	mangas, err := getFavoritesManga(username)
 	if err != nil {
-		logger.Log("Error GET Anilist Fav Mangas: " + err.Error())
+		logger.Log("ERROR - GET Anilist Fav Mangas: " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -68,7 +68,7 @@ func GetFavoriteCharactersController(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
 	characters, err := getFavoritesCharacters(username)
 	if err != nil {
-		logger.Log("Error GET Anilist Fav Characters: " + err.Error())
+		logger.Log("ERROR - GET Anilist Fav Characters: " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -81,7 +81,7 @@ func GetFavoriteStaffController(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
 	staff, err := getFavoritesStaff(username)
 	if err != nil {
-		logger.Log("Error GET Anilist Fav Staff " + err.Error())
+		logger.Log("ERROR - GET Anilist Fav Staff " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -94,7 +94,7 @@ func GetFavoriteStudiosController(w http.ResponseWriter, r *http.Request) {
 	username := os.Getenv("ANILIST_USERNAME")
 	studios, err := getFavoritesStudios(username)
 	if err != nil {
-		logger.Log("Error GET Anilist Fav Studios " + err.Error())
+		logger.Log("ERROR - GET Anilist Fav Studios " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

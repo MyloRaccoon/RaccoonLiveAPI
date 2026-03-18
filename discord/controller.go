@@ -3,6 +3,7 @@ package discord
 import (
 	"encoding/json"
 	"net/http"
+	"raccoonlive-api/logger"
 )
 
 func Controller(w http.ResponseWriter, r *http.Request) {
@@ -10,4 +11,5 @@ func Controller(w http.ResponseWriter, r *http.Request) {
 	defer Status.MU.RUnlock()
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(&Status)
+	logger.Log("SUCCESS - GET discord")
 }
