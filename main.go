@@ -15,6 +15,7 @@ import (
 	"raccoonlive-api/anilist"
 	"raccoonlive-api/discord"
 	"raccoonlive-api/github"
+	"raccoonlive-api/mangacollec"
 	"raccoonlive-api/music"
 	"raccoonlive-api/youtube"
 )
@@ -48,6 +49,14 @@ func main() {
 	router := mux.NewRouter()
 	
 	router.HandleFunc("/discord", discord.Controller).Methods("GET")
+
+	router.HandleFunc("/mangacollec/series", mangacollec.GetSeriesController).Methods("GET")
+	router.HandleFunc("/mangacollec/editions", mangacollec.GetEditionsController).Methods("GET")
+	router.HandleFunc("/mangacollec/volumes", mangacollec.GetVolumesController).Methods("GET")
+	router.HandleFunc("/mangacollec/box_editions", mangacollec.GetBoxEditionsController).Methods("GET")
+	router.HandleFunc("/mangacollec/boxes", mangacollec.GetBoxesController).Methods("GET")
+	router.HandleFunc("/mangacollec/box_volumes", mangacollec.GetBoxVolumesController).Methods("GET")
+	router.HandleFunc("/mangacollec/possession_volumes", mangacollec.GetVolumesInPossessionsController).Methods("GET")
 
 	router.HandleFunc("/anilist", anilist.GetProfileController).Methods("GET")
 	router.HandleFunc("/anilist/activity", anilist.GetLastActivityController).Methods("GET")
