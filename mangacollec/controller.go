@@ -16,6 +16,8 @@ func GetSeriesController(w http.ResponseWriter, r *http.Request) {
 	series := data.Series
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	json.NewEncoder(w).Encode(series)
 	logger.Log("SUCCESS - GET MangaCollec Series")
 }
@@ -30,6 +32,8 @@ func GetEditionsController(w http.ResponseWriter, r *http.Request) {
 	editions := data.Editions
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	json.NewEncoder(w).Encode(editions)
 	logger.Log("SUCCESS - GET MangaCollec Editions")
 }
@@ -44,6 +48,8 @@ func GetVolumesController(w http.ResponseWriter, r *http.Request) {
 	volumes := data.Volumes
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	json.NewEncoder(w).Encode(volumes)
 	logger.Log("SUCCESS - GET MangaCollec Volumes")
 }
@@ -58,6 +64,8 @@ func GetBoxEditionsController(w http.ResponseWriter, r *http.Request) {
 	boxEditions := data.BoxEditions
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	json.NewEncoder(w).Encode(boxEditions)
 	logger.Log("SUCCESS - GET MangaCollec BoxEditions")
 }
@@ -72,6 +80,8 @@ func GetBoxesController(w http.ResponseWriter, r *http.Request) {
 	boxes := data.Boxes
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	json.NewEncoder(w).Encode(boxes)
 	logger.Log("SUCCESS - GET MangaCollec Boxes")
 }
@@ -86,6 +96,8 @@ func GetBoxVolumesController(w http.ResponseWriter, r *http.Request) {
 	boxVolumes := data.BoxVolumes
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	json.NewEncoder(w).Encode(boxVolumes)
 	logger.Log("SUCCESS - GET MangaCollec BoxVolumes")
 }
@@ -99,6 +111,8 @@ func GetVolumesInPossessionsController(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	json.NewEncoder(w).Encode(volumes)
 	logger.Log("SUCCESS - GET MangaCollec VolumesInPossession")
 }

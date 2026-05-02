@@ -42,10 +42,11 @@ func presenceUpdate(s *discordgo.Session, p *discordgo.PresenceUpdate) {
 	if len(p.Activities) > 0 {
 		activity = p.Activities[0].Name
 	}
+	id := p.User.ID
 	username := p.User.Username
 	displayName := p.User.DisplayName()
 	avatar := p.User.Avatar
-	updateStatus(username, displayName, avatar, activity, "")
+	updateStatus(id, username, displayName, avatar, activity, "")
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -59,13 +60,16 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		msg = "Status removed"
 	}
 	user := m.Author
-	updateStatus(user.Username, user.DisplayName(), user.Avatar, "", m.Content)
+	updateStatus(user.ID, user.Username, user.DisplayName(), user.Avatar, "&dontupdate", m.Content)
 	s.ChannelMessageSend(m.ChannelID, msg)
 }
 
-func updateStatus(username string, displayName string, avatar string, activity string, status string) {
+func updateStatus(id string, username string, displayName string, avatar string, activity string, status string) {
 	Status.MU.Lock()
 	defer Status.MU.Unlock()
+	if id != "" {
+		Status.ID = id
+	}
 	if username != "" {
 		Status.Username = username
 	}
@@ -73,9 +77,9 @@ func updateStatus(username string, displayName string, avatar string, activity s
 		Status.DisplayName = displayName
 	}
 	if avatar != "" {
-		Status.Avatar = avatar
+		Status.Avatar = fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", id, avatar)
 	}
-	if activity != "" {
+	if activity != "&dontupdate" {
 		Status.Activity = activity
 	}
 	if status == "&remove" {
